@@ -278,7 +278,11 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
     }
 
     @computed
-    get clippingPlanesDimension(): SelectableDimensionGroup {
+    get clippingPlanesDimension(): SelectableDimensionGroup | undefined {
+      if (this.clippingPlanes.planes.length === 0) {
+        return undefined;
+      }
+
       return {
         type: "group",
         id: "clipping-planes",

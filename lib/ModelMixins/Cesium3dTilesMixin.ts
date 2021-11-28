@@ -266,11 +266,11 @@ export default function Cesium3dTilesMixin<
     }
 
     @computed get selectableDimensions(): SelectableDimension[] {
-      return [
+      return filterOutUndefined([
         ...super.selectableDimensions,
         this.shadowDimension,
         this.clippingPlanesDimension
-      ];
+      ]);
     }
 
     @computed
