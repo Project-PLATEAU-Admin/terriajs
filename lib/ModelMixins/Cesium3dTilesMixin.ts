@@ -7,6 +7,7 @@ import {
   runInAction,
   toJS
 } from "mobx";
+import BoundingSphere from "terriajs-cesium/Source/Core/BoundingSphere";
 import Cartesian2 from "terriajs-cesium/Source/Core/Cartesian2";
 import Cartesian3 from "terriajs-cesium/Source/Core/Cartesian3";
 import clone from "terriajs-cesium/Source/Core/clone";
@@ -25,6 +26,7 @@ import Cesium3DTileStyle from "terriajs-cesium/Source/Scene/Cesium3DTileStyle";
 import ClippingPlane from "terriajs-cesium/Source/Scene/ClippingPlane";
 import ClippingPlaneCollection from "terriajs-cesium/Source/Scene/ClippingPlaneCollection";
 import Constructor from "../Core/Constructor";
+import filterOutUndefined from "../Core/filterOutUndefined";
 import isDefined from "../Core/isDefined";
 import { isJsonObject, JsonObject } from "../Core/Json";
 import makeRealPromise from "../Core/makeRealPromise";
@@ -41,6 +43,7 @@ import Cesium3dTilesTraits, {
   OptionsTraits
 } from "../Traits/TraitsClasses/Cesium3dTilesTraits";
 import CatalogMemberMixin, { getName } from "./CatalogMemberMixin";
+import ClippingPlanesMixin from "./ClippingPlanesMixin";
 import MappableMixin from "./MappableMixin";
 import ShadowMixin from "./ShadowMixin";
 
@@ -69,14 +72,18 @@ class ObservableCesium3DTileset extends Cesium3DTileset {
 export default function Cesium3dTilesMixin<
   T extends Constructor<Model<Cesium3dTilesTraits>>
 >(Base: T) {
-  abstract class Cesium3dTilesMixin extends ShadowMixin(
-    MappableMixin(CatalogMemberMixin(Base))
+  abstract class Cesium3dTilesMixin extends ClippingPlanesMixin(
+    ShadowMixin(MappableMixin(CatalogMemberMixin(Base)))
   ) {
     protected tileset?: ObservableCesium3DTileset;
 
-    // Just a variable to save the original tileset.root.transform if it exists
+    // Saves the original tileset.root.transform
     @observable
     private originalRootTransform: Matrix4 = Matrix4.IDENTITY.clone();
+
+    // An observable variable to track tileset.ready
+    @observable
+    isTilesetReady: boolean = false;
 
     protected async forceLoadMapItems() {
       try {
@@ -133,6 +140,7 @@ export default function Cesium3dTilesMixin<
 
       tileset._catalogItem = this;
       if (!tileset.destroyed) {
+        this.isTilesetReady = false;
         this.tileset = tileset;
       }
 
@@ -142,6 +150,7 @@ export default function Cesium3dTilesMixin<
       // the root transform and transformation traits in mapItems.
       makeRealPromise(tileset.readyPromise).then(
         action(() => {
+          this.isTilesetReady = tileset.ready;
           if (tileset.root !== undefined) {
             this.originalRootTransform = tileset.root.transform.clone();
             tileset.root.transform = Matrix4.IDENTITY.clone();
@@ -205,6 +214,12 @@ export default function Cesium3dTilesMixin<
       return modelMatrixFromTraits;
     }
 
+    modelBoundingSphere(): BoundingSphere | undefined {
+      if (this.tileset && this.isTilesetReady) {
+        return this.tileset.boundingSphere;
+      }
+    }
+
     @computed
     get mapItems() {
       if (this.isLoadingMapItems || !isDefined(this.tileset)) {
@@ -218,12 +233,6 @@ export default function Cesium3dTilesMixin<
       this.tileset.style = toJS(this.cesiumTileStyle);
       this.tileset.shadows = this.cesiumShadows;
       this.tileset.show = this.show;
-
-      if (isDefined(this.cesiumTileClippingPlaneCollection)) {
-        this.tileset.clippingPlanes = toJS(
-          this.cesiumTileClippingPlaneCollection
-        );
-      }
 
       const key = this
         .colorBlendMode as keyof typeof Cesium3DTileColorBlendMode;
@@ -244,11 +253,24 @@ export default function Cesium3dTilesMixin<
         tilesetBaseSse * this.terria.baseMaximumScreenSpaceError;
 
       this.tileset.modelMatrix = this.modelMatrix;
-      return [this.tileset];
+
+      if (this.clippingPlaneCollection) {
+        this.tileset.clippingPlanes = toJS(this.clippingPlaneCollection);
+      }
+
+      const clippingPlanesDataSource = this.clippingPlanesDataSource;
+      if (clippingPlanesDataSource) {
+        clippingPlanesDataSource.show = this.show;
+      }
+      return filterOutUndefined([this.tileset, clippingPlanesDataSource]);
     }
 
     @computed get selectableDimensions(): SelectableDimension[] {
-      return [...super.selectableDimensions, this.shadowDimension];
+      return [
+        ...super.selectableDimensions,
+        this.shadowDimension,
+        this.clippingPlanesDimension
+      ];
     }
 
     @computed
@@ -334,56 +356,6 @@ export default function Cesium3dTilesMixin<
       if (showExpression.length > 0) {
         return showExpression;
       }
-    }
-
-    @computed get cesiumTileClippingPlaneCollection() {
-      if (!isDefined(this.clippingPlanes)) {
-        return;
-      }
-
-      if (this.clippingPlanes.planes.length == 0) {
-        return;
-      }
-
-      const {
-        planes,
-        enabled = true,
-        unionClippingRegions = false,
-        edgeColor,
-        edgeWidth,
-        modelMatrix
-      } = this.clippingPlanes;
-
-      const planesMapped = planes.map((plane: any) => {
-        return new ClippingPlane(
-          Cartesian3.fromArray(plane.normal || []),
-          plane.distance
-        );
-      });
-
-      let options = {
-        planes: planesMapped,
-        enabled,
-        unionClippingRegions
-      };
-
-      if (edgeColor && edgeColor.length > 0) {
-        options = Object.assign(options, {
-          edgeColor: Color.fromCssColorString(edgeColor) || Color.WHITE
-        });
-      }
-
-      if (edgeWidth && edgeWidth > 0) {
-        options = Object.assign(options, { edgeWidth: edgeWidth });
-      }
-
-      if (modelMatrix && modelMatrix.length > 0) {
-        const array = clone(toJS(modelMatrix));
-        options = Object.assign(options, {
-          modelMatrix: Matrix4.fromArray(array) || Matrix4.IDENTITY
-        });
-      }
-      return new ClippingPlaneCollection(options);
     }
 
     @computed get cesiumTileStyle() {

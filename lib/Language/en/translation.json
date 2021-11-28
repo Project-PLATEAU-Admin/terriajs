@@ -1503,6 +1503,13 @@
         "both": "Cast and Receive"
       }
     },
+    "clippingPlanes": {
+      "groupName": "Clipping planes",
+      "options": {
+        "clipModel": "Clip model",
+        "edit": "Edit clipping planes"
+      }
+    },
     "commonModelErrors": {
       "3dTypeIn2dMode": "**Note:** This dataset can not be displayed in the 2D viewer. Switch to one of the 3D map modes."
     },

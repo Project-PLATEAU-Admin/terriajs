@@ -24,6 +24,13 @@ export class ClippingPlaneDefinitionTraits extends ModelTraits {
 export class ClippingPlaneCollectionTraits extends ModelTraits {
   @primitiveTrait({
     type: "boolean",
+    name: "showEditorUi",
+    description: "When true, activates the clipping plane editor UI."
+  })
+  showEditorUi: boolean = false;
+
+  @primitiveTrait({
+    type: "boolean",
     name: "Enabled Clipping Plane",
     description: "Determines whether the clipping planes are active."
   })
