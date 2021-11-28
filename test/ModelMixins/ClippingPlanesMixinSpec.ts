@@ -1,7 +1,9 @@
 import BoundingSphere from "terriajs-cesium/Source/Core/BoundingSphere";
 import Cartesian3 from "terriajs-cesium/Source/Core/Cartesian3";
 import ClippingPlanesMixin from "../../lib/ModelMixins/ClippingPlanesMixin";
+import CommonStrata from "../../lib/Models/Definition/CommonStrata";
 import CreateModel from "../../lib/Models/Definition/CreateModel";
+import updateModelFromJson from "../../lib/Models/Definition/updateModelFromJson";
 import Terria from "../../lib/Models/Terria";
 import mixTraits from "../../lib/Traits/mixTraits";
 import ClippingPlanesTraits from "../../lib/Traits/TraitsClasses/ClippingPlanesTraits";
@@ -23,13 +25,26 @@ describe("ClippingPlanesMixinSpec", function() {
   });
 
   describe("selectableDimension", function() {
-    it("is a group with 3 child dimensions", function() {
+    it("returns undefined when no clipping planes are defined");
+    it("otherwise returns a group with child dimensions", function() {
       const item = new Test("terria", terria);
+      updateModelFromJson(item, CommonStrata.user, {
+        clippingPlanes: {
+          planes: [
+            {
+              normal: [1.0, 0.0, 0.0],
+              distance: 0
+            }
+          ]
+        }
+      });
       const dim = item.clippingPlanesDimension;
       expect(dim).toBeDefined();
-      expect(dim.type).toBe("group");
-      if (dim.type === "group") {
-        expect(dim.selectableDimensions.length).toBe(2);
+      if (dim) {
+        expect(dim.type).toBe("group");
+        if (dim.type === "group") {
+          expect(dim.selectableDimensions.length).toBeGreaterThan(0);
+        }
       }
     });
   });
