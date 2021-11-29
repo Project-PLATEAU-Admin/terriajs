@@ -6,4 +6,5 @@ describe("ClippingPlanesController", function() {
   it("fires a mouseOver event when the cursor is above a plane");
   it("fires a mouseOut event when the cursor is leaves the plane");
   it("should not fire a mouseOver event when a plane is already picked");
+  it("should fire mouseOut event when the cursor leaves the canvas");
 });

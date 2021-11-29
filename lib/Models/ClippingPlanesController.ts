@@ -61,6 +61,8 @@ export default class ClippingPlanesController {
       this.handleMouseRelease.bind(this),
       ScreenSpaceEventType.LEFT_UP
     );
+
+    this.scene.canvas.addEventListener("mouseout", this.handleCanvasMouseOut);
   }
 
   handleMousePick({ position }: MouseClick) {
@@ -130,6 +132,15 @@ export default class ClippingPlanesController {
     }
   }
 
+  // Defined as property to make it easier to pass to add/removeEventListener.
+  handleCanvasMouseOut = () => {
+    if (this.state.is === "mouseOver") {
+      const mouseOverEntity = this.state.mouseOverEntity;
+      this.state = { is: "none" };
+      this.callback({ event: "mouseOut", entity: mouseOverEntity });
+    }
+  };
+
   movePlaneEntity(pickedEntity: PlaneEntity, movement: MouseMovement) {
     const clippingPlane = pickedEntity.plane.plane.getValue(
       JulianDate.now()
@@ -184,6 +195,10 @@ export default class ClippingPlanesController {
 
   destroy() {
     this.eventHandler.destroy();
+    this.scene.canvas.removeEventListener(
+      "mouseout",
+      this.handleCanvasMouseOut
+    );
   }
 }
 

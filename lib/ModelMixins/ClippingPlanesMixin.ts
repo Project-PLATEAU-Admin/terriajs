@@ -58,7 +58,8 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
       }
 
       this.clippingPlanesInteractonDisposer = autorun(() => {
-        this.destroyClippingPlanesController();
+        this.clippingPlanesController?.destroy();
+        this.clippingPlanesController = undefined;
 
         const scene = this.terria.cesium?.scene;
 
@@ -137,6 +138,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
 
         case "mouseOut":
           this.resetPlaneGraphics(planeGraphics);
+          setCanvasCursor(this.terria, "auto");
           break;
       }
     }
@@ -148,15 +150,10 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
       planeGraphics.outlineWidth = 1 as any;
     }
 
-    private destroyClippingPlanesController() {
-      this.clippingPlanesController?.destroy();
-      this.clippingPlanesController = undefined;
-      setCanvasCursor(this.terria, "auto");
-    }
-
     private stopClippingPlanesInteraction() {
-      this.destroyClippingPlanesController();
+      this.clippingPlanesController?.destroy();
       this.clippingPlanesInteractonDisposer?.();
+      this.clippingPlanesController = undefined;
       this.clippingPlanesInteractonDisposer = undefined;
     }
 
