@@ -58,8 +58,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
       }
 
       this.clippingPlanesInteractonDisposer = autorun(() => {
-        this.clippingPlanesController?.destroy();
-        this.clippingPlanesController = undefined;
+        this.destroyClippingPlanesController();
 
         const scene = this.terria.cesium?.scene;
 
@@ -103,7 +102,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
           planeGraphics.material = Color.WHITE.withAlpha(0.1) as any;
           planeGraphics.outlineColor = Color.CYAN as any;
           planeGraphics.outlineWidth = 5 as any;
-          setCursor(this.terria, "grabbing");
+          setCanvasCursor(this.terria, "grabbing");
           break;
 
         case "release":
@@ -113,7 +112,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
             "distance",
             clippingPlane.distance
           );
-          setCursor(this.terria, "auto");
+          setCanvasCursor(this.terria, "auto");
           break;
 
         case "move":
@@ -133,7 +132,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
           planeGraphics.outlineColor = Color.CYAN as any;
           planeGraphics.outlineWidth = 5 as any;
           // cursor type "grab" doesn't work in chrome for some reason :(
-          setCursor(this.terria, "pointer");
+          setCanvasCursor(this.terria, "pointer");
           break;
 
         case "mouseOut":
@@ -149,10 +148,15 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
       planeGraphics.outlineWidth = 1 as any;
     }
 
-    private stopClippingPlanesInteraction() {
+    private destroyClippingPlanesController() {
       this.clippingPlanesController?.destroy();
-      this.clippingPlanesInteractonDisposer?.();
       this.clippingPlanesController = undefined;
+      setCanvasCursor(this.terria, "auto");
+    }
+
+    private stopClippingPlanesInteraction() {
+      this.destroyClippingPlanesController();
+      this.clippingPlanesInteractonDisposer?.();
       this.clippingPlanesInteractonDisposer = undefined;
     }
 
@@ -334,7 +338,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
   return MixedClass;
 }
 
-function setCursor(terria: Terria, cursorType: string) {
+function setCanvasCursor(terria: Terria, cursorType: string) {
   const scene = terria.cesium?.scene;
   if (scene) {
     scene.canvas.style.cursor = cursorType;
