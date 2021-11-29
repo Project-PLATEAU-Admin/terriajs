@@ -6,8 +6,7 @@ import {
   IReactionDisposer,
   onBecomeObserved,
   onBecomeUnobserved,
-  toJS,
-  trace
+  toJS
 } from "mobx";
 import BoundingSphere from "terriajs-cesium/Source/Core/BoundingSphere";
 import Cartesian2 from "terriajs-cesium/Source/Core/Cartesian2";
@@ -17,14 +16,12 @@ import Color from "terriajs-cesium/Source/Core/Color";
 import JulianDate from "terriajs-cesium/Source/Core/JulianDate";
 import CesiumMath from "terriajs-cesium/Source/Core/Math";
 import Matrix4 from "terriajs-cesium/Source/Core/Matrix4";
-import Ray from "terriajs-cesium/Source/Core/Ray";
 import CallbackProperty from "terriajs-cesium/Source/DataSources/CallbackProperty";
 import CustomDataSource from "terriajs-cesium/Source/DataSources/CustomDataSource";
 import PlaneGraphics from "terriajs-cesium/Source/DataSources/PlaneGraphics";
 import ClippingPlane from "terriajs-cesium/Source/Scene/ClippingPlane";
 import ClippingPlaneCollection from "terriajs-cesium/Source/Scene/ClippingPlaneCollection";
 import Constructor from "../Core/Constructor";
-import Cesium from "../Models/Cesium";
 import ClippingPlanesController, {
   ClippingPlaneEvent
 } from "../Models/ClippingPlanesController";
@@ -64,11 +61,7 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
         this.clippingPlanesController?.destroy();
         this.clippingPlanesController = undefined;
 
-        trace();
-        const scene =
-          this.terria.currentViewer instanceof Cesium
-            ? this.terria.currentViewer.scene
-            : undefined;
+        const scene = this.terria.cesium?.scene;
 
         if (
           !this.clippingPlanes.showEditorUi ||
@@ -341,13 +334,8 @@ function ClippingPlanesMixin<T extends Constructor<BaseType>>(Base: T) {
   return MixedClass;
 }
 
-const rpRayScratch1 = new Ray();
-
 function setCursor(terria: Terria, cursorType: string) {
-  const scene =
-    terria.currentViewer instanceof Cesium
-      ? terria.currentViewer.scene
-      : undefined;
+  const scene = terria.cesium?.scene;
   if (scene) {
     scene.canvas.style.cursor = cursorType;
   }
