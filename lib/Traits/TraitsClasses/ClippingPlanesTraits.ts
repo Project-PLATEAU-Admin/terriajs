@@ -3,6 +3,7 @@ import primitiveTrait from "../Decorators/primitiveTrait";
 import primitiveArrayTrait from "../Decorators/primitiveArrayTrait";
 import objectArrayTrait from "../Decorators/objectArrayTrait";
 import objectTrait from "../Decorators/objectTrait";
+import LatLonHeightTraits from "./LatLonHeightTraits";
 
 export class ClippingPlaneDefinitionTraits extends ModelTraits {
   @primitiveTrait({
@@ -19,6 +20,23 @@ export class ClippingPlaneDefinitionTraits extends ModelTraits {
     description: "The plane's normal (normalized)."
   })
   normal: number[] = [];
+}
+
+export class ClippingBoxTraits extends ModelTraits {
+  @objectTrait({
+    type: LatLonHeightTraits,
+    name: "Box center",
+    description: "Center point of the box. "
+  })
+  center?: LatLonHeightTraits;
+
+  @primitiveArrayTrait({
+    type: "number",
+    name: "Half axes",
+    description:
+      "A 3x3 transformation matrix, to rotate and scale a 0x0x0 cube centered at the origin."
+  })
+  halfAxes?: number[];
 }
 
 export class ClippingPlaneCollectionTraits extends ModelTraits {
@@ -59,6 +77,14 @@ export class ClippingPlaneCollectionTraits extends ModelTraits {
       "The color applied to highlight the edge along which an object is clipped."
   })
   edgeColor?: string;
+
+  @objectTrait({
+    type: ClippingBoxTraits,
+    name: "Clipping box",
+    description:
+      "Definition of the box used for clipping the model. If defined the `planes` definition is ignored and only the box will be used for clipping the model."
+  })
+  box?: ClippingBoxTraits;
 
   @objectArrayTrait({
     type: ClippingPlaneDefinitionTraits,

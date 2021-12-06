@@ -221,6 +221,37 @@ export default function Cesium3dTilesMixin<
     }
 
     @computed
+    get clippingPlanesOrigin(): Cartesian3 {
+      if (this.tileset && this.isTilesetReady) {
+        if ((this.tileset as any).clippingPlanesOriginMatrix) {
+          const originMatrix: Matrix4 = (this.tileset as any)
+            .clippingPlanesOriginMatrix;
+          const origin = Matrix4.getTranslation(originMatrix, new Cartesian3());
+          console.log(
+            "**mix**",
+            Cartesian3.subtract(
+              origin,
+              this.tileset.boundingSphere.center,
+              new Cartesian3()
+            )
+          );
+          return origin;
+        }
+      }
+      return Cartesian3.ZERO.clone();
+    }
+
+    @computed
+    get clippingPlanesOriginMatrix(): Matrix4 {
+      if (this.tileset && this.isTilesetReady) {
+        if ((this.tileset as any).clippingPlanesOriginMatrix) {
+          return this.tileset.clippingPlanesOriginMatrix.clone();
+        }
+      }
+      return Matrix4.IDENTITY.clone();
+    }
+
+    @computed
     get mapItems() {
       if (this.isLoadingMapItems || !isDefined(this.tileset)) {
         return [];
@@ -256,6 +287,8 @@ export default function Cesium3dTilesMixin<
 
       if (this.clippingPlaneCollection) {
         this.tileset.clippingPlanes = toJS(this.clippingPlaneCollection);
+        // @ts-ignore TODO: figure out how to avoid this
+        //this.tileset._clippingPlanesOriginMatrix = undefined;
       }
 
       const clippingPlanesDataSource = this.clippingPlanesDataSource;
