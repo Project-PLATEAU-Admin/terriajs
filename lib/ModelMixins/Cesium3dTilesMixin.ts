@@ -245,6 +245,7 @@ export default function Cesium3dTilesMixin<
     get clippingPlanesOriginMatrix(): Matrix4 {
       if (this.tileset && this.isTilesetReady) {
         if ((this.tileset as any).clippingPlanesOriginMatrix) {
+          //@ts-ignore
           return this.tileset.clippingPlanesOriginMatrix.clone();
         }
       }

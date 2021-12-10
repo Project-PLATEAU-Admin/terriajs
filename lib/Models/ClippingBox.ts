@@ -585,7 +585,7 @@ export default class ClippingBox {
             new Cartesian3()
           );
           return position;
-        }, false),
+        }, false) as any,
         point: {
           pixelSize: 10,
           color: Color.WHITE
@@ -598,7 +598,7 @@ export default class ClippingBox {
               point.color = Color.BLUE as any;
             }
             adjacentPlanes.forEach(plane => {
-              plane.material = Color.CYAN.withAlpha(0.1) as any;
+              plane!.material = Color.CYAN.withAlpha(0.1) as any;
             });
           },
 
@@ -608,7 +608,7 @@ export default class ClippingBox {
               point.color = Color.WHITE as any;
             }
             adjacentPlanes.forEach(plane => {
-              plane.outlineColor = Color.WHITE as any;
+              plane!.outlineColor = Color.WHITE as any;
             });
           }
         }
