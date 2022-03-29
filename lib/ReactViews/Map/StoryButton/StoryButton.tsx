@@ -79,20 +79,11 @@ export default (props: Props) => {
     <div>
       <button
         ref={storyButtonRef}
-        className={Styles.storyBtn}
+        className={Styles.btn}
+        title={t("story.storyBtnTitle")}
         type="button"
         onClick={onStoryButtonClick(props)}
         aria-expanded={props.viewState.storyBuilderShown}
-        css={`
-          ${(p: ButtonProps) =>
-            p["aria-expanded"] &&
-            `&:not(.foo) {
-                      background: ${p.theme.colorPrimary};
-                      svg {
-                        fill: ${p.theme.textLight};
-                      }
-                    }`}
-        `}
       >
         <Icon glyph={Icon.GLYPHS.story} />
         <span>{t("story.story")}</span>

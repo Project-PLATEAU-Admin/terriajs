@@ -42,7 +42,7 @@ const FilterSection = observer(
       return (
         <div key={filter.property} className={Styles.filter}>
           <label htmlFor={filter.property}>
-            Show {filter.name}: {filter.minimumShown} to {filter.maximumShown}
+            {filter.name}: {filter.minimumShown} to {filter.maximumShown}
           </label>
           <Range
             value={values}

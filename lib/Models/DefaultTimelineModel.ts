@@ -12,16 +12,19 @@ export default class DefaultTimelineModel extends DiscretelyTimeVaryingMixin(
     super(uniqueId, terria);
 
     const now = JulianDate.now();
-    this.setTrait(
-      CommonStrata.defaults,
-      "startTime",
-      JulianDate.toIso8601(JulianDate.addHours(now, -12, new JulianDate()))
-    );
-    this.setTrait(
-      CommonStrata.defaults,
-      "stopTime",
-      JulianDate.toIso8601(JulianDate.addHours(now, 12, new JulianDate()))
-    );
+
+    const startTime = JulianDate.toDate(now);
+    const stopTime = JulianDate.toDate(now);
+    for (const tm of [startTime, stopTime]) {
+      tm.setHours(0);
+      tm.setMinutes(0);
+      tm.setSeconds(0);
+    }
+
+    stopTime.setDate(stopTime.getDate() + 1);
+
+    this.setTrait(CommonStrata.defaults, "startTime", startTime.toISOString());
+    this.setTrait(CommonStrata.defaults, "stopTime", stopTime.toISOString());
   }
 
   get discreteTimes() {

@@ -11,3 +11,20 @@
     }
   }
 }
+
+.btn {
+  composes: btn from "../../../Sass/common/_buttons.scss";
+  composes: btn--map from "../../../Sass/common/_buttons.scss";
+  background-color: $color-primary !important;
+  color: #ffffff !important;
+  svg {
+    fill: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    svg {
+      fill: #ffffff;
+    }
+  }
+}

@@ -66,8 +66,13 @@ const Workbench = observer(
       const shouldExpandAll = this.props.terria.workbench.shouldExpandAll;
       return (
         <div className={Styles.workbench}>
+          <WorkbenchList
+            viewState={this.props.viewState}
+            terria={this.props.terria}
+          />
           <BadgeBar
-            label={t("workbench.label")}
+            // label={t("workbench.label")}
+            label="Data Sets"
             badge={this.props.terria.workbench.items.length}
           >
             <button
@@ -75,9 +80,9 @@ const Workbench = observer(
               onClick={this.removeAll}
               className={Styles.removeButton}
             >
-              <Icon glyph={Icon.GLYPHS.remove} /> {t("workbench.removeAll")}
+              <Icon glyph={Icon.GLYPHS.trashCan} /> {t("workbench.removeAll")}
             </button>
-            {shouldExpandAll ? (
+            {/* {shouldExpandAll ? (
               <button
                 type="button"
                 onClick={this.expandAll}
@@ -93,12 +98,8 @@ const Workbench = observer(
               >
                 {t("workbench.collapseAll")}
               </button>
-            )}
+            )} */}
           </BadgeBar>
-          <WorkbenchList
-            viewState={this.props.viewState}
-            terria={this.props.terria}
-          />
         </div>
       );
     }

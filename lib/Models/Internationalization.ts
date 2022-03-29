@@ -3,7 +3,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 import HttpApi from "i18next-http-backend";
 import translationEN from "../Language/en/translation.json";
-import translationFR from "../Language/fr/translation.json";
+import translationJA from "../Language/ja/translation.json";
 
 export interface I18nBackendOptions {
   /**
@@ -125,8 +125,8 @@ class Internationalization {
           en: {
             translation: translationEN
           },
-          fr: {
-            translation: translationFR
+          ja: {
+            translation: translationJA
           }
         },
 

@@ -5,9 +5,12 @@ import "mutationobserver-shim";
 
 import TerriaViewerWrapper from "../Map/TerriaViewerWrapper";
 import DistanceLegend from "../Map/Legend/DistanceLegend";
+// import FeedbackButton from "../Feedback/FeedbackButton";
 import LocationBar from "../Map/Legend/LocationBar";
 import MapNavigation from "../Map/Navigation/MapNavigation";
 import MenuBar from "../Map/MenuBar";
+import MapDataCount from "../BottomDock/MapDataCount";
+// import defined from "terriajs-cesium/Source/Core/defined";
 import FeatureDetection from "terriajs-cesium/Source/Core/FeatureDetection";
 import BottomDock from "../BottomDock/BottomDock";
 import classNames from "classnames";
@@ -17,8 +20,9 @@ import Loader from "../Loader";
 import Styles from "./map-column.scss";
 import { observer } from "mobx-react";
 import SlideUpFadeIn from "../Transitions/SlideUpFadeIn/SlideUpFadeIn";
-
-import BottomLeftBar from "../Map/BottomLeftBar/BottomLeftBar";
+import TerriaCesiumLogo from "./TerriaCesiumLogo";
+import i18next from "i18next";
+import { googleAnalyticsNotification } from "../Notification/googleAnalyticsNotification";
 
 const isIE = FeatureDetection.isInternetExplorer();
 const chromeVersion = FeatureDetection.chromeVersion();
@@ -88,6 +92,23 @@ const MapColumn = observer(
       }
     },
 
+    showGoogleAnalyticsExplanation(e) {
+      e.preventDefault();
+      this.props.terria.notificationState.addNotificationToQueue({
+        title: "Google Analytics の利用について",
+        message: googleAnalyticsNotification
+      });
+    },
+
+    showTerrainDataAttributes(e) {
+      e.preventDefault();
+      this.props.terria.notificationState.addNotificationToQueue({
+        title: "地形データ",
+        message:
+          "基盤地図標高モデルから作成<br>（測量法に基づく国土地理院長承認（使用） R 3JHs 778）"
+      });
+    },
+
     render() {
       const { customElements } = this.props;
       // const { t } = this.props;
@@ -115,7 +136,7 @@ const MapColumn = observer(
                       "opacity: 0.3;"}
                   `}
                 >
-                  <MenuBar
+                  {/* <MenuBar
                     terria={this.props.terria}
                     viewState={this.props.viewState}
                     allBaseMaps={this.props.allBaseMaps}
@@ -123,7 +144,7 @@ const MapColumn = observer(
                     menuLeftItems={customElements.menuLeft}
                     animationDuration={this.props.animationDuration}
                     elementConfig={this.props.terria.elements.get("menu-bar")}
-                  />
+                  /> */}
                   <MapNavigation
                     terria={this.props.terria}
                     viewState={this.props.viewState}
@@ -146,9 +167,12 @@ const MapColumn = observer(
                 />
               </div>
               <If condition={!this.props.viewState.hideMapUi}>
-                <BottomLeftBar
+                <MapDataCount
                   terria={this.props.terria}
                   viewState={this.props.viewState}
+                  elementConfig={this.props.terria.elements.get(
+                    "map-data-count"
+                  )}
                 />
                 <SlideUpFadeIn isVisible={this.props.viewState.isMapZooming}>
                   <Toast>
@@ -162,6 +186,14 @@ const MapColumn = observer(
                     />
                   </Toast>
                 </SlideUpFadeIn>
+                <div className={Styles.mapBottomBar}>
+                  <a href="#" onClick={this.showGoogleAnalyticsExplanation}>
+                    Google Analyticsの利用について
+                  </a>
+                  <a href="#" onClick={this.showTerrainDataAttributes}>
+                    地形データ
+                  </a>
+                </div>
                 <div className={Styles.locationDistance}>
                   <LocationBar
                     terria={this.props.terria}
@@ -169,6 +201,17 @@ const MapColumn = observer(
                   />
                   <DistanceLegend terria={this.props.terria} />
                 </div>
+                <TerriaCesiumLogo
+                  css={`
+                    position: absolute;
+                    right: 30px;
+                    bottom: 35px;
+                    @media (max-width: 770px) {
+                      right: unset;
+                      left: 30px;
+                    }
+                  `}
+                />
               </If>
               {/* TODO: re-implement/support custom feedbacks */}
               {/* <If

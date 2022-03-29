@@ -69,10 +69,6 @@ const LocationBar = observer(
               </div>
             </Otherwise>
           </Choose>
-          <div className={Styles.sectionLong}>
-            <span>{t("legend.elev")}</span>
-            <span>{this.props.mouseCoords.elevation}</span>
-          </div>
         </button>
       );
     }

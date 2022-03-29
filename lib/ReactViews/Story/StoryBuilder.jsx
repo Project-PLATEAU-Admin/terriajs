@@ -31,6 +31,20 @@ import {
 
 const STORY_VIDEO = "storyVideo";
 
+const TitleText = styled(Text)`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  text-align: center;
+`;
+
+const PlayShareBox = styled(Box)`
+  > button {
+    border-radius: 4px;
+  }
+`;
+
 const StoryBuilder = observer(
   createReactClass({
     displayName: "StoryBuilder",
@@ -253,15 +267,13 @@ const StoryBuilder = observer(
       const { t } = this.props;
       return (
         <Box column>
-          <VideoGuide
-            /*
-          // @ts-ignore */
+          {/* <VideoGuide
             viewState={this.props.viewState}
-            videoLink={"https://www.youtube-nocookie.com/embed/fbiQawV8IYY"}
+            videoLink={"https://www.youtube.com/embed/fbiQawV8IYY"}
             background={dataStoriesImg}
             videoName={STORY_VIDEO}
-          />
-          <StoryButton
+          /> */}
+          {/* <StoryButton
             title={t("story.gettingStartedTitle")}
             btnText={t("story.gettingStarted")}
             onClick={() => {
@@ -269,7 +281,7 @@ const StoryBuilder = observer(
             }}
           >
             <StyledIcon glyph={Icon.GLYPHS.play} light styledWidth={"20px"} />
-          </StoryButton>
+          </StoryButton> */}
           <Spacing bottom={2} />
           <CaptureScene
             disabled={this.state.isRemoving}
@@ -290,7 +302,7 @@ const StoryBuilder = observer(
     renderPlayShare(hasStories) {
       const { t } = this.props;
       return (
-        <Box justifySpaceBetween>
+        <PlayShareBox justifySpaceBetween>
           <StoryButton
             fullWidth
             disabled={this.state.editingMode || !hasStories}
@@ -313,7 +325,7 @@ const StoryBuilder = observer(
             modalWidth={this.props.widthFromMeasureElementHOC - 22}
             onUserClick={this.toggleSharePanel}
           />
-        </Box>
+        </PlayShareBox>
       );
     },
 
@@ -332,21 +344,9 @@ const StoryBuilder = observer(
           : t("story.untitledScene")
         : "";
       return (
-        <Box displayInlineBlock>
-          <BadgeBar
-            label={t("story.badgeBarLabel")}
-            badge={this.props.terria.stories.length}
-          >
-            <RawButton
-              type="button"
-              onClick={this.toggleRemoveDialog}
-              className={Styles.removeButton}
-            >
-              <Icon glyph={Icon.GLYPHS.remove} /> {t("story.removeAllStories")}
-            </RawButton>
-          </BadgeBar>
+        <Box flex={1} column overflow="hidden">
           <Spacing bottom={2} />
-          <Box column paddedHorizontally={2}>
+          <Box flex={1} column paddedHorizontally={2} overflow="hidden">
             {this.state.isRemoving && (
               <RemoveDialog
                 theme={this.props.theme}
@@ -383,17 +383,14 @@ const StoryBuilder = observer(
                 ${(this.state.isRemoving || this.state.isSharing) &&
                   `opacity: 0.3`}
               `}
+              overflow="hidden"
             >
               <Box
                 column
                 scroll
-                overflowY={"auto"}
-                styledMaxHeight={"calc(100vh - 283px)"}
                 position="static"
+                overflowY="auto"
                 ref={this.storiesWrapperRef}
-                css={`
-                  margin-right: -10px;
-                `}
               >
                 <Sortable
                   onSort={this.onSort}
@@ -401,7 +398,6 @@ const StoryBuilder = observer(
                   dynamic={true}
                   css={`
                     position: static;
-                    margin-right: 10px;
                   `}
                 >
                   <For each="story" index="index" of={stories}>
@@ -420,6 +416,7 @@ const StoryBuilder = observer(
                       closeMenu={() => this.openMenu(null)}
                       editStory={() => this.editStory(story)}
                       parentRef={this.storiesWrapperRef}
+                      className={Styles.story}
                     />
                   </For>
                 </Sortable>
@@ -431,8 +428,21 @@ const StoryBuilder = observer(
                 onClickCapture={this.onClickCapture}
               ></CaptureScene>
             </Box>
-            <Spacing bottom={2} />
           </Box>
+          <BadgeBar
+            smallBadge
+            label={t("story.badgeBarLabel")}
+            badge={this.props.terria.stories.length}
+          >
+            <RawButton
+              type="button"
+              onClick={this.toggleRemoveDialog}
+              className={Styles.removeButton}
+            >
+              <Icon glyph={Icon.GLYPHS.trashCan} />{" "}
+              {t("story.removeAllStories")}
+            </RawButton>
+          </BadgeBar>
         </Box>
       );
     },
@@ -466,10 +476,12 @@ const StoryBuilder = observer(
           isHidden={!this.props.isVisible}
           styledWidth={"320px"}
           styledMinWidth={"320px"}
-          charcoalGreyBg
           column
         >
-          <Box right>
+          <Box right backgroundColor="#fff" styledHeight="50px" verticalCenter>
+            <TitleText bold extraExtraLarge color="#000">
+              {t("story.panelTitle")}
+            </TitleText>
             <RawButton
               css={`
                 padding: 15px;
@@ -485,15 +497,8 @@ const StoryBuilder = observer(
             </RawButton>
           </Box>
           <Box centered={true} paddedHorizontally={2} displayInlineBlock>
-            <Text bold extraExtraLarge textLight>
-              {t("story.panelTitle")}
-            </Text>
             <Spacing bottom={2} />
-            <Text
-              medium
-              color={this.props.theme.textLightDimmed}
-              highlightLinks
-            >
+            <Text medium textDark>
               {t("story.panelBody")}
             </Text>
             <Spacing bottom={3} />
@@ -503,12 +508,18 @@ const StoryBuilder = observer(
           <Spacing bottom={2} />
           {hasStories && this.renderStories(this.state.editingMode)}
           {this.state.editingMode && (
-            <StoryEditor
-              removeStory={this.removeStory}
-              exitEditingMode={() => this.setState({ editingMode: false })}
-              story={this.state.currentStory}
-              saveStory={this.onSave}
-            />
+            <div
+              css={`
+                height: 0;
+              `} // StoryEditor の margin でレイアウトが崩れるのを防ぐ
+            >
+              <StoryEditor
+                removeStory={this.removeStory}
+                exitEditingMode={() => this.setState({ editingMode: false })}
+                story={this.state.currentStory}
+                saveStory={this.onSave}
+              />
+            </div>
           )}
         </Panel>
       );
@@ -519,6 +530,7 @@ const StoryBuilder = observer(
 const Panel = styled(Box)`
   transition: all 0.25s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #ededed;
   ${props =>
     props.isVisible &&
     `
@@ -536,7 +548,7 @@ const Panel = styled(Box)`
 const CaptureScene = props => {
   const { t } = props;
   return (
-    <StoryButton
+    <StyledStoryButton
       title={t("story.captureSceneTitle")}
       btnText={t("story.captureScene")}
       onClick={props.onClickCapture}
@@ -544,7 +556,7 @@ const CaptureScene = props => {
       fullWidth
     >
       <StyledIcon glyph={Icon.GLYPHS.story} light styledWidth={"20px"} />
-    </StoryButton>
+    </StyledStoryButton>
   );
 };
 
@@ -574,6 +586,10 @@ StoryButton.propTypes = {
   btnText: PropTypes.string,
   children: PropTypes.node
 };
+
+const StyledStoryButton = styled(StoryButton)`
+  border-radius: 4px;
+`;
 
 const RemoveDialog = props => {
   const { t } = useTranslation();

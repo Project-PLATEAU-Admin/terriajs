@@ -7,6 +7,8 @@ import primitiveTrait from "../Decorators/primitiveTrait";
 import mixTraits from "../mixTraits";
 import ModelTraits from "../ModelTraits";
 import DimensionTraits from "./DimensionTraits";
+import LegendTraits from "./LegendTraits";
+import CustomizationTraits from "./CustomizationTraits";
 
 export class MetadataUrlTraits extends ModelTraits {
   @primitiveTrait({
@@ -100,7 +102,9 @@ export class ShortReportTraits extends ModelTraits {
   show = true;
 }
 
-export default class CatalogMemberTraits extends ModelTraits {
+export default class CatalogMemberTraits extends mixTraits(
+  CustomizationTraits
+) {
   @primitiveTrait({
     type: "string",
     name: "Name",

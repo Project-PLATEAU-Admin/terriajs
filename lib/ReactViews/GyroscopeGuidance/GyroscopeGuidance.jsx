@@ -115,11 +115,6 @@ function GyroscopeGuidancePanel(props) {
         <Spacing bottom={4} />
         <Text>{t("compass.guidance.ctrlDragDescription")}</Text>
         <Spacing bottom={4} />
-        <RawButton onClick={props.onClose}>
-          <Text displayBlock primary isLink>
-            {t("compass.guidance.dismissText")}
-          </Text>
-        </RawButton>
       </Text>
     </Box>
   );
@@ -173,9 +168,8 @@ export default function GyroscopeGuidance(props) {
             //   - for 0.85 where the contrast is still great.
             cleanDropdownPanelStyles={css`
               opacity: 0.85;
-              .tjs-sc-InnerPanel,
-              .tjs-sc-InnerPanel__caret {
-                background: ${p => p.theme.textBlack};
+              .tjs-_buttons__btn svg {
+                fill: ${p => p.theme.colorPrimary} !important;
               }
             `}
             refForCaret={controlsMapIcon}

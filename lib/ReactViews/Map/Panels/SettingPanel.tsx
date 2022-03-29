@@ -24,11 +24,12 @@ import withTerriaRef from "../../HOCs/withTerriaRef";
 import MenuPanel from "../../StandardUserInterface/customizable/MenuPanel";
 import Styles from "./setting-panel.scss";
 
-const sides = {
-  left: "settingPanel.terrain.left",
-  both: "settingPanel.terrain.both",
-  right: "settingPanel.terrain.right"
-};
+// const sides = {
+//   left: "settingPanel.terrain.left",
+//   both: "settingPanel.terrain.both",
+//   right: "settingPanel.terrain.right"
+// };
+const sides = ["Left", "Both", "Right"];
 
 type PropTypes = WithTranslation & {
   terria: Terria;
@@ -48,6 +49,8 @@ class SettingPanel extends React.Component<PropTypes> {
   }
 
   @observable _hoverBaseMap = null;
+
+  @observable _enableCollisionDetection = true;
 
   @computed
   get activeMapName() {
@@ -92,7 +95,7 @@ class SettingPanel extends React.Component<PropTypes> {
   ) {
     const mainViewer = this.props.terria.mainViewer;
     event.stopPropagation();
-    this.showTerrainOnSide(sides.both, undefined);
+    this.showTerrainOnSide("Both", undefined);
     setViewerMode(viewer, mainViewer);
     // We store the user's chosen viewer mode for future use.
     this.props.terria.setLocalProperty("viewermode", viewer);
@@ -104,15 +107,15 @@ class SettingPanel extends React.Component<PropTypes> {
     event?.stopPropagation();
 
     switch (side) {
-      case sides.left:
+      case "Left":
         this.props.terria.terrainSplitDirection = ImagerySplitDirection.LEFT;
         this.props.terria.showSplitter = true;
         break;
-      case sides.right:
+      case "Right":
         this.props.terria.terrainSplitDirection = ImagerySplitDirection.RIGHT;
         this.props.terria.showSplitter = true;
         break;
-      case sides.both:
+      case "Both":
         this.props.terria.terrainSplitDirection = ImagerySplitDirection.NONE;
         break;
     }
@@ -125,6 +128,21 @@ class SettingPanel extends React.Component<PropTypes> {
     event.stopPropagation();
     this.props.terria.depthTestAgainstTerrainEnabled = !this.props.terria
       .depthTestAgainstTerrainEnabled;
+    this.props.terria.currentViewer.notifyRepaintRequired();
+  }
+
+  @action
+  toggleCollisionDetection(event: ChangeEvent<HTMLInputElement>) {
+    event.stopPropagation();
+    runInAction(() => {
+      this._enableCollisionDetection = !this._enableCollisionDetection;
+      if (this.props.terria.cesium) {
+        const cesium = this.props.terria.cesium;
+        if (cesium) {
+          cesium.scene.screenSpaceCameraController.enableCollisionDetection = this._enableCollisionDetection;
+        }
+      }
+    });
     this.props.terria.currentViewer.notifyRepaintRequired();
   }
 
@@ -191,9 +209,13 @@ class SettingPanel extends React.Component<PropTypes> {
       supportsDepthTestAgainstTerrain &&
       this.props.terria.depthTestAgainstTerrainEnabled;
 
-    const depthTestAgainstTerrainLabel = depthTestAgainstTerrainEnabled
-      ? t("settingPanel.terrain.showUndergroundFeatures")
-      : t("settingPanel.terrain.hideUndergroundFeatures");
+    const depthTestAgainstTerrainLabel = `クリックして地下を${
+      depthTestAgainstTerrainEnabled ? "表示する" : "非表示にする"
+    }`;
+
+    const collisionDetectionLabel = `クリックして地下に${
+      this._enableCollisionDetection ? "入らない" : "入る"
+    }`;
 
     if (
       this.props.terria.configParameters.useCesiumIonTerrain ||
@@ -204,14 +226,14 @@ class SettingPanel extends React.Component<PropTypes> {
 
     const supportsSide = isCesiumWithTerrain;
 
-    let currentSide = sides.both;
+    let currentSide = "Both";
     if (supportsSide) {
       switch (this.props.terria.terrainSplitDirection) {
         case ImagerySplitDirection.LEFT:
-          currentSide = sides.left;
+          currentSide = "Left";
           break;
         case ImagerySplitDirection.RIGHT:
-          currentSide = sides.right;
+          currentSide = "Right";
           break;
       }
     }
@@ -254,7 +276,7 @@ class SettingPanel extends React.Component<PropTypes> {
           </FlexGrid>
           {!!supportsSide && (
             <>
-              <Spacing bottom={2} />
+              {/* <Spacing bottom={2} />
               <Box column>
                 <Box paddedVertically={1}>
                   <Text as="label">{t("settingPanel.terrain.sideLabel")}</Text>
@@ -272,7 +294,7 @@ class SettingPanel extends React.Component<PropTypes> {
                     </SettingsButton>
                   ))}
                 </FlexGrid>
-              </Box>
+              </Box> */}
               {!!supportsDepthTestAgainstTerrain && (
                 <>
                   <Spacing bottom={2} />
@@ -291,6 +313,19 @@ class SettingPanel extends React.Component<PropTypes> {
                   </Checkbox>
                 </>
               )}
+
+              <>
+                <Spacing bottom={2} />
+                <Checkbox
+                  textProps={{ small: true }}
+                  id="collisionDetection"
+                  title={collisionDetectionLabel}
+                  isChecked={!this._enableCollisionDetection}
+                  onChange={this.toggleCollisionDetection.bind(this)}
+                >
+                  <TextSpan>地下に入る</TextSpan>
+                </Checkbox>
+              </>
             </>
           )}
           <>
@@ -438,9 +473,11 @@ type IButtonProps = {
 };
 
 const SettingsButton = styled(Button)<IButtonProps>`
-  background-color: ${props => props.theme.overlay};
-  border: 1px solid
-    ${props => (props.isActive ? "rgba(255, 255, 255, 0.5)" : "transparent")};
+  background-color: ${props =>
+    props.isActive ? props.theme.colorPrimary : "#ededed"};
+  color: ${props => (props.isActive ? "#fff" : "#444444")};
+  border: none;
+  border-radius: 20px;
 `;
 
 const StyledBasemapButton = styled(RawButton)<IButtonProps>`

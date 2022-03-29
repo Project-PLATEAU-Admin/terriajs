@@ -1,18 +1,6 @@
 @import "~terriajs-variables";
 
 .menu-bar {
-  position: absolute;
-  z-index: 108;
-  top: $map-button-top;
-  left: 0;
-  right: $padding;
-
-  // todo: find some non-layout-change animation technique for
-  // this flex-menu-bar-workbench problem
-  transition: margin-left 0.25s;
-  // margin-left: $work-bench-width + 40px;
-  margin-left: 50px;
-
   display: flex;
   justify-content: space-between;
   flex-flow: wrap;
@@ -25,11 +13,6 @@
   composes: list-reset from "../../Sass/common/_base.scss";
   composes: clearfix from "../../Sass/common/_base.scss";
   composes: sm-show from "../../Sass/common/_base.scss";
-
-  margin: 0 $padding-small $padding-small $padding-small;
-
-  /* Align About button with compass */
-  // margin-right: 7px;
 }
 
 .menu-item {
@@ -44,33 +27,17 @@
   flex-direction: row;
   align-items: center;
 
-  margin-right: $padding-tiny;
+  margin-right: 20px;
 
-  &:last-child {
-    margin-right: 0;
-  }
+  // &:last-child {
+  //   margin-right: 0;
+  // }
 
-  // TODO(?)
-  // These selectors are here so that we can support the various implementations of
-  // menu item, a prop calculated with javascript would be a better option for later
-  &:first-child > div > button,
-  &:first-child > div > a,
-  &:first-child > button,
-  &:first-child > a {
-    border-radius: $map-button-border-radius 0 0 $map-button-border-radius;
-  }
-  &:last-child > div > button,
-  &:last-child > div > a,
-  &:last-child > button,
-  &:last-child > a {
-    border-radius: 0 $map-button-border-radius $map-button-border-radius 0;
-  }
-  &:only-child > div > button,
-  &:only-child > div > a,
-  &:only-child > button,
-  &:only-child > a {
-    border-radius: $map-button-border-radius $map-button-border-radius
-      $map-button-border-radius $map-button-border-radius;
+  & > div > button,
+  & > button,
+  & > div > div > button {
+    border-radius: 4px;
+    box-shadow: none;
   }
 }
 
@@ -82,4 +49,21 @@
   composes: btn from "../../Sass/common/_buttons.scss";
   composes: btn--map from "../../Sass/common/_buttons.scss";
   text-transform: uppercase;
+}
+
+.btn {
+  composes: btn from "../../Sass/common/_buttons.scss";
+  composes: btn--map from "../../Sass/common/_buttons.scss";
+  background-color: $color-primary !important;
+  color: #ffffff !important;
+  svg {
+    fill: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    svg {
+      fill: #ffffff;
+    }
+  }
 }

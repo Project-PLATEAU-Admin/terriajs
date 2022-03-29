@@ -56,7 +56,7 @@ export default class ShortReport extends React.Component<{
       <Box fullWidth displayInlineBlock padded>
         {/* Show shortReport */}
         {isDefined(this.props.item.shortReport) && (
-          <Text textLight medium>
+          <Text medium>
             {parseCustomMarkdownToReact(this.props.item.shortReport, {
               catalogItem: this.props.item
             })}
@@ -71,6 +71,7 @@ export default class ShortReport extends React.Component<{
               <Collapsible
                 title={r.name!}
                 isOpen={r.show}
+                bodyTextProps={{ fullWidth: true }}
                 onToggle={show =>
                   this.clickShortReport.bind(this, r.name, show)()
                 }

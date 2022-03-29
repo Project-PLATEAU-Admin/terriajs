@@ -327,6 +327,18 @@ function GeoJsonMixin<T extends Constructor<Model<GeoJsonTraits>>>(Base: T) {
         return [];
       }
       this._dataSource ? (this._dataSource.show = this.show) : null;
+      if (this._dataSource) {
+        this._dataSource.entities.values.forEach(entity => {
+          if (entity.polygon)
+            entity.polygon.classificationType = this.cesiumClassificationType;
+
+          if (entity.polyline)
+            entity.polyline.classificationType = this.cesiumClassificationType;
+          if (entity.rectangle)
+            entity.rectangle.classificationType = this.cesiumClassificationType;
+        });
+      }
+
       return filterOutUndefined([
         this._dataSource,
         this._imageryProvider

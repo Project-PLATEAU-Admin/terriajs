@@ -52,6 +52,8 @@ import WebFeatureServiceCatalogGroup from "./Ows/WebFeatureServiceCatalogGroup";
 import WebFeatureServiceCatalogItem from "./Ows/WebFeatureServiceCatalogItem";
 import WebMapServiceCatalogGroup from "./Ows/WebMapServiceCatalogGroup";
 import WebMapServiceCatalogItem from "./Ows/WebMapServiceCatalogItem";
+import WebMapServiceCatalogItemWithoutDescription from "./Ows/WebMapServiceCatalogItemWithoutDescription";
+
 import WebMapTileServiceCatalogGroup from "./Ows/WebMapTileServiceCatalogGroup";
 import WebMapTileServiceCatalogItem from "./Ows/WebMapTileServiceCatalogItem";
 import WebProcessingServiceCatalogFunction from "./Ows/WebProcessingServiceCatalogFunction";
@@ -67,6 +69,12 @@ export default function registerCatalogMembers() {
     WebMapServiceCatalogItem.type,
     WebMapServiceCatalogItem
   );
+
+  CatalogMemberFactory.register(
+    "wms-no-description",
+    WebMapServiceCatalogItemWithoutDescription
+  );
+
   CatalogMemberFactory.register(
     WebMapServiceCatalogGroup.type,
     WebMapServiceCatalogGroup

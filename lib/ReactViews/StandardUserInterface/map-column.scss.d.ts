@@ -6,8 +6,10 @@ interface CssExports {
   'feedbackButtonWrapper': string;
   'location-distance': string;
   'locationDistance': string;
+  'map-bottom-bar': string;
   'map-cell-map': string;
   'map-wrapper': string;
+  'mapBottomBar': string;
   'mapCell': string;
   'mapCellChrome': string;
   'mapCellMap': string;

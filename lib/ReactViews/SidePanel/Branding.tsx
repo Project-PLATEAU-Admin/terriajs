@@ -41,8 +41,9 @@ export default observer(
 
           box-sizing: border-box;
 
-          width: 100%;
-          height: ${(p: any) => p.theme.logoHeight};
+          // width: 100%;
+          width: 200px;
+          height: ${(p: any) => p.theme.smLogoHeight};
 
           overflow: hidden;
 
@@ -63,14 +64,12 @@ export default observer(
 
           font-family: ${(p: any) => p.theme.fontPop};
 
-          padding: ${(p: any) => p.theme.logoPaddingHorizontal}
-            ${(p: any) => p.theme.logoPaddingVertical};
+          padding: 0 0;
 
           @media (max-width: ${(p: any) => p.theme.sm}px) {
+            width: 100%;
             height: ${(p: any) => p.theme.logoSmallHeight};
-
-            padding: ${(p: any) => p.theme.logoSmallPaddingHorizontal}
-              ${(p: any) => p.theme.logoSmallPaddingVertical};
+            padding: 5px 0;
 
             // Remove a "display: flex" on small screen if only showing one brandingHtmlElement
             a {
@@ -89,5 +88,46 @@ export default observer(
         ))}
       </div>
     );
+
+    // plateau v1.0 でのカスタマイズ
+    // return (
+    //   <a
+    //     css={`
+    //       display: flex;
+    //       align-items: center;
+    //       box-sizing: border-box;
+    //       height: ${(p: any) => p.theme.smLogoHeight};
+    //       overflow: hidden;
+    //       @include transition(all, 0.5s, linear);
+
+    //       @media (min-width: ${(p: any) => p.theme.sm}px) {
+    //         // padding: 5px 12px;
+    //         margin: 0 -10px;
+    //         height: 100%;
+    //         padding: 8px 0;
+    //       }
+
+    //       img {
+    //         max-height: 100%;
+    //         max-width: 100%;
+
+    //         // For some reason without this IE9 flips out and stretches the images.
+    //         // width: auto;
+    //         // height: auto;
+    //       }
+    //     `}
+    //     href="https://www.mlit.go.jp/plateau/"
+    //     target="_blank"
+    //     rel="noreferrer noreferrer"
+    //   >
+    //     {brandingHtmlElements.map((element, idx) => (
+    //       <React.Fragment key={idx}>
+    //         {parseCustomHtmlToReact(
+    //           element.replace(/\{\{\s*version\s*\}\}/g, version)
+    //         )}
+    //       </React.Fragment>
+    //     ))}
+    //   </a>
+    // );
   }
 );

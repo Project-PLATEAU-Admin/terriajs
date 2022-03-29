@@ -38,6 +38,7 @@ class WorkbenchList extends React.Component {
               sortData={item}
               key={item.uniqueId}
               viewState={this.props.viewState}
+              terria={this.props.terria}
             />
           </For>
         </Sortable>

@@ -18,8 +18,8 @@ const ButtonWrapper = styled(Box).attrs({
 // styles half ripped from nav.scss
 const StyledWorkbenchButton = styled(RawButton)`
   border-radius: 3px;
-  background: ${props => props.theme.dark};
-  color: ${props => props.theme.textLight};
+  background: #ffffff;
+  color: #939393;
   padding: 0 10px;
   flex-grow: 1;
   margin-right: 10px;
@@ -34,7 +34,7 @@ const StyledWorkbenchButton = styled(RawButton)`
     margin: 0 auto;
     ${props => !props.iconOnly && `margin-right: 8px;`};
     vertical-align: middle;
-    fill: ${props => props.theme.textLight};
+    fill: ${props => props.theme.dark};
   }
 
   &:hover,

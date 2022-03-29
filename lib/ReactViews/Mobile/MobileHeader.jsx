@@ -150,13 +150,7 @@ const MobileHeader = observer(
 
       return (
         <div className={Styles.ui}>
-          <Box
-            justifySpaceBetween
-            fullWidth
-            fullHeight
-            paddedRatio={1}
-            backgroundColor={this.props.theme.dark}
-          >
+          <Box justifySpaceBetween fullWidth fullHeight paddedRatio={1}>
             <Choose>
               <When
                 condition={
@@ -176,10 +170,12 @@ const MobileHeader = observer(
                     title={t("mobile.toggleNavigation")}
                   >
                     <StyledIcon
-                      light
                       glyph={Icon.GLYPHS.menu}
-                      styledWidth="20px"
+                      styledWidth="37px"
                       styledHeight="20px"
+                      css={`
+                        fill: #939393;
+                      `}
                     />
                   </HamburgerButton>
                   <Branding
@@ -191,7 +187,7 @@ const MobileHeader = observer(
                 <div
                   className={Styles.groupRight}
                   css={`
-                    background-color: ${p => p.theme.dark};
+                    background-color: #ffffff;
                   `}
                 >
                   <button
@@ -288,10 +284,9 @@ const MobileHeader = observer(
 );
 
 const HamburgerButton = styled(RawButton)`
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 0 5px;
   margin-right: 3px;
-  background: ${p => p.theme.darkLighter};
   width: 50px;
   height: 38px;
   box-sizing: content-box;
@@ -301,7 +296,7 @@ const HamburgerButton = styled(RawButton)`
   &:hover,
   &:focus,
   & {
-    border: 1px solid ${p => p.theme.textLightTranslucent};
+    border: 1px solid #939393;
   }
 `;
 

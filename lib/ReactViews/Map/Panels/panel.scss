@@ -60,6 +60,10 @@
     @include transform(translate3d(0, 0, 0));
     opacity: 1;
   }
+
+  button {
+    color: $text-light;
+  }
 }
 .inner-close-btn {
   composes: btn from "../../../Sass/common/_buttons.scss";
@@ -128,12 +132,15 @@
   composes: btn from "../../../Sass/common/_buttons.scss";
   composes: btn--map from "../../../Sass/common/_buttons.scss";
 
+  background-color: $color-primary !important;
+
   // border-radius: $radius-small;
   border-radius: 0;
   position: relative;
   border: 0;
 
   svg {
+    fill: #ffffff !important;
     // fill: #6487ae;
     // margin: 0 3px 1px 4px;
     // vertical-align: middle;

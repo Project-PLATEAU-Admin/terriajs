@@ -44,9 +44,9 @@ const StyledMapNavigation = styled.div<StyledMapNavigationProps>`
   z-index: 1;
   bottom: 25px;
   @media (min-width: ${props => props.theme.sm}px) {
-    top: 80px;
+    top: 30px;
     bottom: 50px;
-    right: 16px;
+    right: 30px;
   }
   @media (max-width: ${props => props.theme.mobile}px) {
     & > div {
@@ -269,6 +269,9 @@ class MapNavigation extends React.Component<PropTypes> {
       bottomItems = items.filter(item => item.location === "BOTTOM");
       items = items.filter(item => item.location === "TOP");
     }
+
+    items = items.filter(item => ["measure-tool"].indexOf(item.id) < 0);
+
     return (
       <StyledMapNavigation trainerBarVisible={viewState.trainerBarVisible}>
         <Box
@@ -290,6 +293,12 @@ class MapNavigation extends React.Component<PropTypes> {
             {items.map(item => {
               // Do not expand in place for horizontal orientation
               // as it results in buttons overlapping and hiding neighboring buttons.
+              if (
+                item.id === "split-tool" &&
+                terria.configParameters.disableSplitter
+              ) {
+                return null;
+              }
               return (
                 <MapNavigationItem
                   expandInPlace={this.orientation !== Orientation.HORIZONTAL}

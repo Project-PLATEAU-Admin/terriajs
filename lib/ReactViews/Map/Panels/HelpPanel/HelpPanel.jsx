@@ -50,8 +50,9 @@ class HelpPanel extends React.Component {
       <Box
         displayInlineBlock
         backgroundColor={this.props.theme.textLight}
-        styledWidth={"320px"}
+        styledWidth={"400px"}
         fullHeight
+        overflow={"auto"}
         onClick={() => this.props.viewState.setTopElement("HelpPanel")}
         css={`
           position: fixed;
@@ -60,7 +61,7 @@ class HelpPanel extends React.Component {
             : 110};
           transition: right 0.25s;
           transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-          right: ${isAnimatingOpen ? -320 : isExpanded ? 490 : 0}px;
+          right: ${isAnimatingOpen ? -400 : isExpanded ? 490 : 0}px;
         `}
       >
         <Box position="absolute" paddedRatio={3} topRight>
@@ -76,7 +77,7 @@ class HelpPanel extends React.Component {
         <Box
           centered
           paddedHorizontally={5}
-          paddedVertically={17}
+          paddedVertically={10}
           displayInlineBlock
           css={`
             direction: ltr;
@@ -84,10 +85,10 @@ class HelpPanel extends React.Component {
             padding-bottom: 0px;
           `}
         >
-          <Text extraBold heading textDark>
+          <Text extraBold heading textDark textAlignCenter>
             {t("helpPanel.menuPaneTitle")}
           </Text>
-          <Spacing bottom={4} />
+          <Spacing bottom={6} />
           <Text medium textDark highlightLinks>
             {parseCustomMarkdownToReact(
               t("helpPanel.menuPaneBody", {
@@ -96,7 +97,7 @@ class HelpPanel extends React.Component {
             )}
           </Text>
           <Spacing bottom={5} />
-          <Box centered>
+          {/* <Box centered>
             <Button
               primary
               rounded
@@ -127,7 +128,7 @@ class HelpPanel extends React.Component {
             >
               {t("helpPanel.takeTour")}
             </Button>
-          </Box>
+          </Box> */}
         </Box>
         <Spacing bottom={10} />
         <Box centered displayInlineBlock fullWidth styledPadding="0 26px">

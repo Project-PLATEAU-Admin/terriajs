@@ -4,6 +4,12 @@ import classNames from "classnames";
 
 // Icon
 export const GLYPHS = {
+  hatena: require("../../wwwroot/images/icons/hatena.svg"),
+  eye2: require("../../wwwroot/images/icons/eye_2.svg"),
+  eye2Closed: require("../../wwwroot/images/icons/eye_2_closed.svg"),
+  marker: require("../../wwwroot/images/icons/marker.svg"),
+  trashCan: require("../../wwwroot/images/icons/trash_can.svg"),
+
   calendar: require("../../wwwroot/images/icons/calendar.svg"),
   calendar2: require("../../wwwroot/images/icons/calendar2.svg"),
   about: require("../../wwwroot/images/icons/about.svg"),

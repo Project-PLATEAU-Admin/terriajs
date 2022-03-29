@@ -88,7 +88,8 @@ const ViewingControls = observer(
     propTypes: {
       item: PropTypes.object.isRequired,
       viewState: PropTypes.object.isRequired,
-      t: PropTypes.func.isRequired
+      t: PropTypes.func.isRequired,
+      setInitialCamera: PropTypes.func.isRequired
     },
 
     getInitialState() {
@@ -125,6 +126,9 @@ const ViewingControls = observer(
     },
 
     zoomTo() {
+      if (this.props.setInitialCamera()) {
+        return;
+      }
       runInAction(() => {
         const viewer = this.props.viewState.terria.currentViewer;
         const item = this.props.item;
@@ -452,7 +456,7 @@ const ViewingControls = observer(
                 this.state.isMapZoomingToCatalogItem ? (
                   <AnimatedSpinnerIcon />
                 ) : (
-                  <Icon glyph={Icon.GLYPHS.search} />
+                  <Icon glyph={Icon.GLYPHS.marker} />
                 )
               }
             >
@@ -461,7 +465,7 @@ const ViewingControls = observer(
             <WorkbenchButton
               onClick={this.previewItem}
               title={t("workbench.previewItemTitle")}
-              iconElement={() => <Icon glyph={Icon.GLYPHS.about} />}
+              iconElement={() => <Icon glyph={Icon.GLYPHS.hatena} />}
               disabled={item.disableAboutData}
             >
               {t("workbench.previewItem")}

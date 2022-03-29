@@ -15,6 +15,8 @@ import { observer } from "mobx-react";
 
 import withControlledVisibility from "../../ReactViews/HOCs/withControlledVisibility";
 import HelpButton from "./HelpButton/HelpButton";
+import Icon from "../../Styled/Icon";
+import { useTranslation } from "react-i18next";
 
 const StyledMenuBar = styled.div`
   pointer-events: none;
@@ -26,6 +28,7 @@ const StyledMenuBar = styled.div`
 `;
 // The map navigation region
 const MenuBar = observer(props => {
+  const { t } = useTranslation();
   const menuItems = props.menuItems || [];
   const handleClick = () => {
     runInAction(() => {
@@ -70,7 +73,14 @@ const MenuBar = observer(props => {
             <SettingPanel terria={props.terria} viewState={props.viewState} />
           </li>
           <li className={Styles.menuItem}>
-            <HelpButton viewState={props.viewState} />
+            {/* shareと位置入れ替え
+            <HelpButton viewState={props.viewState} /> 
+            */}
+            <SharePanel
+              terria={props.terria}
+              viewState={props.viewState}
+              animationDuration={props.animationDuration}
+            />
           </li>
 
           {props.terria.configParameters?.languageConfiguration?.enabled ? (
@@ -95,11 +105,23 @@ const MenuBar = observer(props => {
         </If>
         <ul className={classNames(Styles.menu)}>
           <li className={Styles.menuItem}>
+            {/* helpと位置入れ替え
             <SharePanel
               terria={props.terria}
               viewState={props.viewState}
               animationDuration={props.animationDuration}
-            />
+            /> */}
+
+            {/* HelpButton を使うべき？ */}
+            {/* <button
+              className={Styles.btn}
+              title={t("helpMenu.btnTitle")}
+              onClick={() => props.viewState.showHelpPanel()}
+            >
+              <Icon glyph={Icon.GLYPHS.help} />
+              <span>{t("helpMenu.btnText")}</span>
+            </button> */}
+            <HelpButton viewState={props.viewState} />
           </li>
         </ul>
         <If condition={!props.viewState.useSmallScreenInterface}>

@@ -55,6 +55,8 @@
   overflow: hidden;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .explorerPanelIsVisible {
@@ -103,15 +105,6 @@
   pointer-events: none;
   left: 0;
 
-  @media (min-width: $md) {
-    left: $work-bench-width + 22px;
-    top: 62px;
-    right: 96px;
-    bottom: 0;
-    // debugger
-    // background: rgba(#ffcc00, 0.5);
-  }
-
   & > div {
     pointer-events: auto;
     position: absolute;
@@ -125,12 +118,14 @@
 
     @media (min-width: $sm) and (max-width: $feature-info-forty-percent-size) {
       max-width: $feature-info-medium-max-size;
-      top: 60px;
+      top: 90px;
+      right: 30px;
     }
 
     @media (min-width: $feature-info-forty-percent-size) {
-      max-width: 80%;
-      top: 0;
+      max-width: $feature-info-medium-max-size;
+      top: 90px;
+      right: 135px;
     }
   }
 }
@@ -143,6 +138,7 @@
   transition: all 0.25s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   // border-right: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 40px;
   visibility: visible;
 }
 
@@ -154,7 +150,7 @@
 
 .showWorkbenchButton {
   position: fixed;
-  top: 18px;
+  top: 76px;
   transform: translateX(-200px);
   z-index: 99;
   width: 200px;
@@ -181,13 +177,14 @@
   .uiInner {
     display: flex;
     overflow: hidden;
+    flex: 1;
+    z-index: 0;
   }
   .sidePanel {
     vertical-align: top;
   }
   .map {
     position: relative;
-    height: 100vh;
     top: auto;
     bottom: auto;
     left: auto;
@@ -196,6 +193,5 @@
     // bug, if anything goes wrong revert this back
     // overflow: hidden;
     flex-grow: 1;
-    flex-basis: calc(100% - #{$work-bench-width});
   }
 }

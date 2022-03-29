@@ -6,6 +6,7 @@ import combine from "terriajs-cesium/Source/Core/combine";
 
 import { terriaTheme } from "./StandardTheme";
 import arrayContains from "../../Core/arrayContains";
+import DesktopHeader from "../Desktop/DesktopHeader";
 import Branding from "../SidePanel/Branding";
 import DragDropFile from "../DragDropFile";
 import DragDropNotification from "./../DragDropNotification";
@@ -282,12 +283,17 @@ const StandardUserInterface = observer(
               `}
               ref={w => (this._wrapper = w)}
             >
-              <div
-                className={Styles.ui}
-                css={`
-                  background: ${theme.dark};
-                `}
-              >
+              <div className={Styles.ui}>
+                <Medium>
+                  <DesktopHeader
+                    terria={this.props.terria}
+                    version={this.props.version}
+                    viewState={this.props.viewState}
+                    allBaseMaps={this.props.allBaseMaps}
+                    customElements={customElements}
+                    animationDuration={animationDuration}
+                  />
+                </Medium>
                 <div className={Styles.uiInner}>
                   <If condition={!this.props.viewState.hideMapUi}>
                     <Small>
@@ -321,11 +327,6 @@ const StandardUserInterface = observer(
                           this.props.viewState.triggerResizeEvent()
                         }
                       >
-                        <Branding
-                          terria={terria}
-                          viewState={this.props.viewState}
-                          version={this.props.version}
-                        />
                         <SidePanel
                           terria={terria}
                           viewState={this.props.viewState}
@@ -387,6 +388,15 @@ const StandardUserInterface = observer(
                       </If>
                     </main>
                   </section>
+                  {this.props.terria.configParameters.storyEnabled &&
+                    showStoryBuilder && (
+                      <StoryBuilder
+                        isVisible={showStoryBuilder}
+                        terria={terria}
+                        viewState={this.props.viewState}
+                        animationDuration={animationDuration}
+                      />
+                    )}
                 </div>
               </div>
 
@@ -461,15 +471,6 @@ const StandardUserInterface = observer(
                 <StoryPanel terria={terria} viewState={this.props.viewState} />
               )}
             </div>
-            {this.props.terria.configParameters.storyEnabled &&
-              showStoryBuilder && (
-                <StoryBuilder
-                  isVisible={showStoryBuilder}
-                  terria={terria}
-                  viewState={this.props.viewState}
-                  animationDuration={animationDuration}
-                />
-              )}
             {this.props.viewState.showHelpMenu &&
               this.props.viewState.topElement === "HelpPanel" && (
                 <HelpPanel terria={terria} viewState={this.props.viewState} />

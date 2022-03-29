@@ -281,22 +281,6 @@ export const WelcomeMessagePure = props => {
                 <Box styledMargin={"0 auto"} displayInlineBlock>
                   <If condition={!viewState.useSmallScreenInterface}>
                     <WelcomeMessageButton
-                      onClick={() => {
-                        handleClose(false);
-                        // not sure if we should wait for the exit animation,
-                        // if we don't, we have a flicker due to the difference
-                        // in overlay darkness - but if we wait, it goes
-                        // dark -> light -> dark anyway..
-                        setShouldTakeTour(true);
-                        viewState.setTourIndex(0);
-                        viewState.setShowTour(true);
-                        viewState.setTopElement(TourPortalDisplayName);
-                      }}
-                      buttonText={t("welcomeMessage.tourBtnText")}
-                      buttonIcon={Icon.GLYPHS.tour}
-                    />
-                    <Spacing bottom={4} />
-                    <WelcomeMessageButton
                       buttonText={t("welcomeMessage.helpBtnText")}
                       buttonIcon={Icon.GLYPHS.newHelp}
                       onClick={() => {

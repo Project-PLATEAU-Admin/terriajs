@@ -119,6 +119,16 @@ const DataPreview = observer(
                   </button>
                 </Trans>
               </div>
+              <p class="geospatial-jp-link-container">
+                <a
+                  href="https://www.geospatial.jp/ckan/dataset/plateau-tokyo23ku"
+                  target="_brank"
+                >
+                  オープンデータ・ダウンロード
+                  <br />
+                  （G空間情報センターへのリンク）
+                </a>
+              </p>
             </Otherwise>
           </Choose>
         </div>

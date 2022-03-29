@@ -15,6 +15,8 @@ import Box from "../../Styled/Box";
 import Spacing from "../../Styled/Spacing";
 import Text from "../../Styled/Text";
 import Button from "../../Styled/Button";
+import { runInAction } from "mobx";
+import { getTimelineInfo } from "../../ViewModels/workbenchFuncitons";
 
 const BoxHelpfulHints = styled(Box)``;
 
@@ -59,38 +61,6 @@ function EmptyWorkbench(props) {
           </Text>
           <ResponsiveSpacing />
         </Box>
-        <BoxHelpfulHints column paddedRatio={3} overflowY="auto" scroll>
-          <Box left>
-            <Text extraLarge bold>
-              {t("emptyWorkbench.helpfulHints")}
-            </Text>
-          </Box>
-          <Spacing bottom={4} />
-          <Box>
-            <HelpfulHintsIcon />
-            <Spacing right={1} />
-            <Text medium light>
-              {t("emptyWorkbench.helpfulHintsOne")}
-            </Text>
-          </Box>
-          <Spacing bottom={3} />
-          <Box>
-            <HelpfulHintsIcon />
-            <Spacing right={1} />
-            <Text medium light>
-              {t("emptyWorkbench.helpfulHintsTwo")}
-            </Text>
-          </Box>
-          <Spacing bottom={3} />
-          <Box>
-            <HelpfulHintsIcon />
-            <Spacing right={1} />
-            <Text medium light>
-              {t("emptyWorkbench.helpfulHintsThree")}
-            </Text>
-          </Box>
-          <ResponsiveSpacing />
-        </BoxHelpfulHints>
       </Box>
     </Text>
   );
@@ -122,6 +92,10 @@ SidePanelButton.propTypes = {
   children: PropTypes.node
 };
 
+const StyledSidePanelButton = styled(SidePanelButton)`
+  border-radius: 4px;
+`;
+
 export const EXPLORE_MAP_DATA_NAME = "ExploreMapDataButton";
 export const SIDE_PANEL_UPLOAD_BUTTON_NAME = "SidePanelUploadButton";
 
@@ -149,16 +123,32 @@ const SidePanel = observer(
       this.props.viewState.setTopElement("AddData");
       this.props.viewState.openUserData();
     },
+
+    // componentDidUpdate(prevProps, prevState) {
+    //   // TODO: This should be done only when a workbench item is deleted.
+    //   let needTimeline = false;
+    //   this.props.terria.workbench.items.forEach(item => {
+    //     if (getTimelineInfo(item) !== null) {
+    //       needTimeline = true;
+    //     }
+    //   });
+    //   if (!needTimeline) {
+    //     runInAction(() => {
+    //       this.props.terria.timelineStack.defaultTimeVarying = undefined;
+    //       this.props.terria.timelineStack.items.clear();
+    //     });
+    //   }
+    // },
+
     render() {
       const { t, theme } = this.props;
       const addData = t("addData.addDataBtnText");
       const uploadText = t("models.catalog.upload");
       return (
-        <div>
+        <Box column fullHeight>
           <div
             css={`
-              padding: 0 5px;
-              background: ${this.props.theme.dark};
+              padding: 15px 5px 20px;
             `}
           >
             <FullScreenButton
@@ -168,27 +158,27 @@ const SidePanel = observer(
               animationDuration={250}
               btnText={t("addData.btnHide")}
             />
-            <SearchBoxAndResults
+            {/* <SearchBoxAndResults
               viewState={this.props.viewState}
               terria={this.props.terria}
               placeholder={t("search.placeholder")}
             />
-            <Spacing bottom={2} />
-            <Box justifySpaceBetween>
-              <SidePanelButton
+            <Spacing bottom={2} /> */}
+            <Box justifyContentSpaceAround>
+              <StyledSidePanelButton
                 ref={this.props.refForExploreMapData}
                 onClick={e => this.onAddDataClicked(e)}
                 title={addData}
                 btnText={addData}
-                styledWidth={"200px"}
+                styledWidth={"290px"}
               >
                 <StyledIcon
                   glyph={Icon.GLYPHS.add}
                   light
                   styledWidth={"20px"}
                 />
-              </SidePanelButton>
-              <SidePanelButton
+              </StyledSidePanelButton>
+              {/* <SidePanelButton
                 ref={this.props.refForUploadData}
                 onClick={e => this.onAddLocalDataClicked(e)}
                 title={t("addData.load")}
@@ -200,13 +190,20 @@ const SidePanel = observer(
                   light
                   styledWidth={"20px"}
                 />
-              </SidePanelButton>
+              </SidePanelButton> */}
             </Box>
-            <Spacing bottom={1} />
           </div>
-          <div
+          <Box
+            flex={1}
+            column
             css={`
               overflow: hidden;
+              > div {
+                overflow: hidden;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+              }
             `}
           >
             <Choose>
@@ -225,8 +222,8 @@ const SidePanel = observer(
                 <EmptyWorkbench t={t} theme={theme} />
               </Otherwise>
             </Choose>
-          </div>
-        </div>
+          </Box>
+        </Box>
       );
     }
   })
