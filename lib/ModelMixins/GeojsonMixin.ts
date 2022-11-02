@@ -758,9 +758,7 @@ function GeoJsonMixin<T extends Constructor<Model<GeoJsonTraits>>>(Base: T) {
         markerOpacity: this.style["marker-opacity"], // not in SimpleStyle spec or supported by Cesium but see below
         fill: defaultColor(this.style.fill, defaults.fill),
         clampToGround: this.clampToGround,
-        markerUrl: this.style["marker-url"] // not in SimpleStyle spec but gives an alternate to maki marker symbols
-          ? proxyCatalogItemUrl(this, this.style["marker-url"])
-          : undefined,
+        markerUrl: "",
         credit: this.attribution
       };
 
@@ -829,6 +827,18 @@ function GeoJsonMixin<T extends Constructor<Model<GeoJsonTraits>>>(Base: T) {
               })
             ]);
           }
+        }
+
+        // propertiesのcategoryの種類から判断する。
+        if (properties?.category == "GOOD") {
+          styles["markerUrl"] =
+            "http://localhost:3001/build/TerriaJS/assets/GOOD.png";
+        } else if (properties?.category == "BAD") {
+          styles["markerUrl"] =
+            "http://localhost:3001/build/TerriaJS/assets/BAD.png";
+        } else {
+          styles["markerUrl"] =
+            "http://localhost:3001/build/TerriaJS/assets/POSSIBLE.png";
         }
 
         // Billboard
