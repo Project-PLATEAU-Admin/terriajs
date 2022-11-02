@@ -20,3 +20,6 @@ dist
 
 # Catalog index generation files
 catalog-index*.json
+
+# vscode
+.vscode/
