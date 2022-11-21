@@ -187,16 +187,26 @@ export const FeatureInfoSection = observer(
       const currentTime = currentTimeIfAvailable(this)
         ? currentTimeIfAvailable(this)
         : JulianDate.now();
-      let description =
-        feature.currentDescription ||
-        getCurrentDescription(feature, currentTime);
-      if (!defined(description) && defined(feature.properties)) {
-        description = describeFromProperties(
-          feature.properties,
-          currentTime,
-          showStringIfPropertyValueIsNull
-        );
-      }
+
+      // marker-urlの有無で個々の判定が変わる？
+      // let description =
+      //   feature.currentDescription ||
+      //   getCurrentDescription(feature, currentTime);
+
+      // if (!defined(description) && defined(feature.properties)) {
+      //   console.log("description");
+      //   description = describeFromProperties(
+      //     feature.properties.downloadableData,
+      //     currentTime,
+      //     showStringIfPropertyValueIsNull
+      //   );
+      // }
+
+      const description = describeFromProperties(
+        feature.properties,
+        currentTime,
+        showStringIfPropertyValueIsNull
+      );
       return description;
     },
 
@@ -261,22 +271,31 @@ export const FeatureInfoSection = observer(
             longitude.toFixed(precision);
         }
       }
-      const fullName =
-        (catalogItemName ? catalogItemName + " - " : "") +
-        this.renderDataTitle();
+      const fullName = this.renderDataTitle();
       const reactInfo = getInfoAsReactComponent(this);
-
+      let iconUrl = "";
+      if (reactInfo.properties?.category === "GOOD") {
+        iconUrl =
+          "https://plateauyokohama-development.web.app/images/GOOD_300.png";
+      } else if (reactInfo.properties?.category === "BAD") {
+        iconUrl =
+          "https://plateauyokohama-development.web.app/images/BAD_300.png";
+      } else {
+        iconUrl =
+          "https://plateauyokohama-development.web.app/images/POSSIBLE_300.png";
+      }
       return (
         <li className={classNames(Styles.section)}>
-          <If condition={this.props.printView}>
+          {/* <If condition={this.props.printView}>
             <h2>{fullName}</h2>
-          </If>
+          </If> */}
           <If condition={!this.props.printView}>
             <button
               type="button"
               onClick={this.clickHeader}
               className={Styles.title}
             >
+              <img width={30} src={iconUrl} />
               <span>{fullName}</span>
               {this.props.isOpen ? (
                 <Icon glyph={Icon.GLYPHS.opened} />
@@ -643,7 +662,7 @@ function mustacheFormatNumberFunction() {
  *     ...
  *   }
  * }
- * 
+ *
  * E.g. {{#terria.partialByName}}{{value}}{{/terria.partialByName}}
      "featureInfoTemplate": {
         "template": "{{Pixel Value}} dwellings in {{#terria.partialByName}}{{feature.data.layerId}}{{/terria.partialByName}} radius.",
@@ -759,43 +778,79 @@ function describeFromProperties(
   if (typeof properties.getValue === "function") {
     properties = properties.getValue(time);
   }
+
+  // geojson内の日本語変換の辞書
+  const translationDict = {
+    group: "グループ",
+    displayName: "",
+    bldgID: "ビルディングID",
+    created: "作成日時",
+    modified: "編集日時",
+    description: "コメント",
+    // category	GOOD
+    // photo
+    createdBy: "投稿した人"
+  };
+
+  // 画像表示用
+  let imageHtml = "";
+  const imageDict = { profile: "アイコン写真", photo: "投稿写真" };
+
   if (typeof properties === "object") {
-    for (const key in properties) {
+    for (let key in properties) {
+      if (key === "description") {
+        html +=
+          "<tr><th>" +
+          translationDict[key] +
+          "</th > <td>" +
+          properties[key] +
+          "</td></tr > ";
+      }
       if (Object.prototype.hasOwnProperty.call(properties, key)) {
         if (simpleStyleIdentifiers.indexOf(key) !== -1) {
           continue;
         }
         let value = properties[key];
-        if (defined(showStringIfPropertyValueIsNull) && !defined(value)) {
-          value = showStringIfPropertyValueIsNull;
-        }
-        if (defined(value)) {
-          if (typeof value.getValue === "function") {
-            value = value.getValue(time);
+        if (key in translationDict) {
+          key = translationDict[key];
+          if (defined(showStringIfPropertyValueIsNull) && !defined(value)) {
+            value = showStringIfPropertyValueIsNull;
           }
-          if (Array.isArray(properties)) {
-            html +=
-              "<tr><td>" +
-              describeFromProperties(
-                value,
-                time,
-                showStringIfPropertyValueIsNull
-              ) +
-              "</td></tr>";
-          } else if (typeof value === "object") {
-            html +=
-              "<tr><th>" +
-              key +
-              "</th><td>" +
-              describeFromProperties(
-                value,
-                time,
-                showStringIfPropertyValueIsNull
-              ) +
-              "</td></tr>";
-          } else {
-            html += "<tr><th>" + key + "</th><td>" + value + "</td></tr>";
+          if (defined(value)) {
+            if (typeof value.getValue === "function") {
+              value = value.getValue(time);
+            }
+            if (Array.isArray(properties)) {
+              html +=
+                "<tr><td>" +
+                describeFromProperties(
+                  value,
+                  time,
+                  showStringIfPropertyValueIsNull
+                ) +
+                "</td></tr>";
+            } else if (typeof value === "object") {
+              html +=
+                "<tr><th>" +
+                key +
+                "</th><td>" +
+                describeFromProperties(
+                  value,
+                  time,
+                  showStringIfPropertyValueIsNull
+                ) +
+                "</td></tr>";
+            } else {
+              html += "<tr><th>" + key + "</th><td>" + value + "</td></tr>";
+            }
           }
+        } else if (key in imageDict) {
+          imageHtml +=
+            "<a href=" +
+            value +
+            "data-lightbox=group><img width=200 src=" +
+            value +
+            "></a>";
         }
       }
     }
@@ -807,7 +862,10 @@ function describeFromProperties(
     html =
       '<table class="cesium-infoBox-defaultTable"><tbody>' +
       html +
-      "</tbody></table>";
+      "</tbody></table>" +
+      "<div>" +
+      imageHtml +
+      "</div>";
   }
   return html;
 }
